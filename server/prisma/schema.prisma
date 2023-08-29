@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = "mysql://root:Prathap@123@Prathap:3306/ChatNow?schema=public"
+  url      = "mysql://root:Prathap@123@127.0.0.1:3306/ChatNow?schema=public"
 }
 
 model User{
