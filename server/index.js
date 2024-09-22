@@ -18,12 +18,13 @@ app.use("/upload/images",express.static("upload/images"));
 app.use("/upload/recordings",express.static("upload/recordings"));
 
 const server=app.listen(process.env.port,()=>{
+    console.log(process.env.port)
     console.log(`Server running on the port ${process.env.port}`);
 });
 
 const io=new Server(server,{
     cors:{
-        origin:"http://localhost:3001",
+        origin:"http://localhost:3000",
     },
 });
 
@@ -49,6 +50,7 @@ io.on("connection",(socket)=>{
 
    socket.on("send-message",(data)=>{
     const sendUserSocket=onlineUsers.get(data.to);
+   
     if(sendUserSocket){
         socket.to(sendUserSocket).emit("msg-recieved",{
             from:data.from,
@@ -98,8 +100,6 @@ io.on("connection",(socket)=>{
     socket.to(sendUserSocket).emit("accept-call");
    })
 });
-
-
 
 
 

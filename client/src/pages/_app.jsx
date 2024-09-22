@@ -1,3 +1,6 @@
+
+//Use _app. js file when you need to add some Global Layout or Meta Tags
+
 import { StateProvider } from "@/context/StateContext";
 import "@/styles/globals.css";
 import Head from "next/head";

@@ -17,11 +17,13 @@ function login() {
 
   async function handleLogin(){
     const provider=new GoogleAuthProvider();
+    console.log("iam here");
     const {user:{displayName:name,email,photoURL:profileImage}}= await signInWithPopup(firebaseAuth,provider);
     try{
         if(email){
+          console.log(CHECK_USER_ROUTE);
           //here we are connecting with the server 
-          const {data}=await axios.post(CHECK_USER_ROUTE,{email});
+          const {data}=await axios.post("http://localhost:3002/api/auth/check-user",{email});
           if(!data.status){
             dispatch({type:reducerCases.SET_NEW_USER,newUser:true});
             dispatch({
@@ -59,7 +61,7 @@ function login() {
   return( <div className="flex justify-center items-center  bg-panel-header-background h-screen w-screen flex-col gap-6">
      <div className="flex items-center justify-center text-white  gap-2">
        <Image src="/whatsapp.gif" alt="whatsapp" height={300} width={300} />
-       <span className="text-7xl">Whatsapp</span>
+       <span className="text-7xl">ChatNow</span>
      </div>
      <button className="flex items-center justify-center gap-7 bg-search-input-container-background p-5 rounded-lg" onClick={handleLogin}>
       <FcGoogle className="text-4xl" />

@@ -1,11 +1,13 @@
 import { privateDecrypt } from "crypto";
 import getPrismaInstance from "../utils/PrismaClient.js";
 import {renameSync} from "fs";
+
 export const addMessage=async(req,res,next)=>{
     try{
         const {message,from,to}=req.body;
         const prisma=getPrismaInstance();
         const getUser=onlineUsers.get(to);
+        
         if(message && from && to){
             const newMessage=await prisma.messages.create({
                 data:{
@@ -79,6 +81,7 @@ export const addImageMessage=async (req,res,next)=>{
             renameSync(req.file.path,fileName);
             const prisma=getPrismaInstance();
             const {from,to}=req.query;
+            //const getUser=onlineUsers.get(to);
             if(from && to){
                 const message=await prisma.messages.create({
                     data:{
@@ -86,8 +89,11 @@ export const addImageMessage=async (req,res,next)=>{
                       sender:{connect:{id:parseInt(from)}},
                       reciever:{connect:{id:parseInt(to)}},
                       type:"image",
+                      //messageStatus:!getUser ? "delivered":"sent",
                     },
                 });
+                console.log(message);
+                
                 return res.status(201).json({message});
             }
             return res.status(400).send("from,to is required.");
@@ -108,6 +114,7 @@ export const addAudioMessage=async (req,res,next)=>{
             renameSync(req.file.path,fileName);
             const prisma=getPrismaInstance();
             const {from,to}=req.query;
+            //const getUser=onlineUsers.get(to);
             if(from && to){
                 const message=await prisma.messages.create({
                     data:{
@@ -115,6 +122,7 @@ export const addAudioMessage=async (req,res,next)=>{
                       sender:{connect:{id:parseInt(from)}},
                       reciever:{connect:{id:parseInt(to)}},
                       type:"audio",
+                      //messageStatus:getUser ? "delivered":"sent",
                     },
                 });
                 return res.status(201).json({message});
@@ -164,7 +172,7 @@ export const getIntialContactswithMessages= async(req,res,next)=>{
        messages.forEach((msg)=>{
             const isSender=(msg.senderId===userId);
             const calculatedId=isSender?msg.recieverId:msg.senderId;
-            if(msg.messageStatus==="sent"){
+            if(msg.messageStatus==="sent" && onlineUsers.get(calculatedId)){
                 messageStatusChange.push(msg.id);
             }
             if(!users.get(calculatedId)){
@@ -213,7 +221,7 @@ export const getIntialContactswithMessages= async(req,res,next)=>{
 
         //console.log(users);
 
-        if(messageStatusChange.length){
+        if(messageStatusChange.length ){
             await prisma.messages.updateMany({
                 where:{
                     id:{in:messageStatusChange},

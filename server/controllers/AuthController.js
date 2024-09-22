@@ -5,6 +5,7 @@ import { generateToken04 } from "../utils/TokenGenerator.js";
 //authcontroller will act like and api and collect the data from the frontend to backend and vice versa
 
 export const checkUser=async (req,res,next)=>{
+  console.log("Iam here");
     try{
         const {email}=req.body;
         if(!email){

@@ -7,9 +7,11 @@ import MessageStatus from "../common/MessageStatus";
 import { FaCamera, FaMicrophone } from "react-icons/fa";
 
 function ChatLIstItem({data,isContactPage=false}) {
-  const [{userInfo,currentChatUser},dispatch]=useStateProvider();
-  
+  const [{userInfo,currentChatUser,message},dispatch]=useStateProvider();
+  const [unreadnotify,setunreadnotify]=useState(true);
+
   const handleContactClick=(()=>{
+    setunreadnotify(false);
     if(!isContactPage){
       dispatch({
         type:reducerCases.CHANGE_CURRENT_CHAT_USER,
@@ -43,7 +45,7 @@ function ChatLIstItem({data,isContactPage=false}) {
         {
           !isContactPage && (
             <div>
-              <span className={`${!data?.totalUnreadMessages>0 ?"text-secondary":"text-icon-green"} text-sm`}>
+              <span className={`${(!data?.totalUnreadMessages>0 || !unreadnotify)?"text-secondary":"text-icon-green"} text-sm`}>
                 {calculateTime(data.createdAt)}
               </span>
             </div>
@@ -75,8 +77,8 @@ function ChatLIstItem({data,isContactPage=false}) {
            </div>)
            }
           </span>
-          {
-            data.totalUnreadMessages>0 && <span className="bg-icon-green px-[5px] rounded-full text-sm">{data.totalUnreadMessages}</span>
+          {  
+            unreadnotify && data.totalUnreadMessages>0 && <span className="bg-icon-green px-[5px] rounded-full text-sm">{data.totalUnreadMessages}</span>
           }
         </div>
       </div>

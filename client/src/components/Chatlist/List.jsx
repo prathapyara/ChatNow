@@ -7,12 +7,13 @@ import ChatLIstItem from "./ChatLIstItem";
 
 function List() {
 
-  const [{userInfo,userContacts,filteredContacts},dispatch]=useStateProvider();
+  const [{userInfo,userContacts,filteredContacts,socket},dispatch]=useStateProvider();
 
   useEffect(()=>{
    const getContacts=async ()=>{
     try{
       const {data:{users,onlineUsers}}=await axios.get(`${GET_INITIAL_CONTACTS_ROUTE}/${userInfo.id}`);
+      
       dispatch({type:reducerCases.SET_USER_CONTACTS,userContacts:users});
       dispatch({type:reducerCases.SET_ONLINE_USERS,onlineUsers});
     }catch(err){
@@ -23,6 +24,8 @@ function List() {
     getContacts();
    }
   },[userInfo]);
+
+  console.log(userContacts);
 
   return (
   <div className="bg-search-input-container-background flex-auto overflow-auto max-h-full custum-scrollbar">

@@ -1,5 +1,6 @@
-import { Html, Head, Main, NextScript } from "next/document";
+//And use the _document. js file only if you need to edit the basic structure of your HTML Code
 
+import { Html, Head, Main, NextScript } from "next/document";
 
 export default function Document() {
   return (

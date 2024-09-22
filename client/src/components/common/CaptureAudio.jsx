@@ -39,7 +39,7 @@ function CaptureAudio({hide}) {
       clearInterval(interval);
     }
 
-  },[isRecording])
+  },[isRecording]);
 
   useEffect(()=>{
     const wavesurfer=WaveSurfer.create({
@@ -80,7 +80,9 @@ function CaptureAudio({hide}) {
 
       const chunks=[];
       mediaRecorder.ondataavailable=(e)=>chunks.push(e.data);
+      console.log(chunks);
       mediaRecorder.onstop=()=>{
+        alert("iam inside the start recordng");
         const blob=new Blob(chunks,{type:"audio/webm;codecs=opus"});
         const audioURL=URL.createObjectURL(blob);
         const audio=new Audio(audioURL);
@@ -88,7 +90,7 @@ function CaptureAudio({hide}) {
         waveform.load(audioURL);
       };
       mediaRecorder.start();
-      console.log(chunks);
+    
     }).catch(err=>{
       console.log(err);
     })
@@ -100,9 +102,11 @@ function CaptureAudio({hide}) {
     waveform.stop();
 
     const audioChucks=[];
-    mediaRecorderRef.current.addEventListener("dataavalible",(event)=>{
+    mediaRecorderRef.current.addEventListener("dataavailable",(event)=>{
+      alert("iam in ");
       audioChucks.push(event.data);
     });
+    console.log(audioChucks);
     mediaRecorderRef.current.addEventListener("stop",()=>{
       const audioBlob=new Blob(audioChucks,{type:"audio/mp3"});
       const audioFile=new File([audioBlob],"recording.mp3");
@@ -142,9 +146,12 @@ function CaptureAudio({hide}) {
   const sendRecording=async()=>{
     
     try{
-      console.log(renderedAudio);
+      
       const formData=new FormData();
+      console.log(typeof(formData));
+      console.log(renderedAudio);
       formData.append("audio",renderedAudio);
+      console.log(formData);
       const response=await axios.post(ADD_AUDIO_MESSAGE_ROUTE,formData,{
         headers:{
           "Content-Type":"multipart/form-data",
@@ -154,8 +161,6 @@ function CaptureAudio({hide}) {
           to:currentChatUser.id,
         },
       });
-
-      console.log(response.data.message);
 
       if(response.status===201){
         socket.current.emit("send-message",{
@@ -187,14 +192,14 @@ function CaptureAudio({hide}) {
   return ( 
   <div className="flex text-2xl w-full justify-end items-center">
     <div className="pt-1">
-      <FaTrash className="text-panel-header-icon" onClick={()=>hide()}/> 
+      <FaTrash className="text-panel-header-icon cursor-pointer" onClick={()=>hide(false)}/> 
     </div>
     <div className="mx-4 py-2 px-4 text-white text-lg flex gap-3 justify-center items-center bg-search-input-container-background rounded-full drop-shadow-lg">
       {isRecording? (
         <div className="text-red-500 animate-pulse w-60 text-center">
             Recording<span>{recordingDuration}</span>
         </div>
-        ):(<div>{recordedAudio && (
+        ):(<div className="cursor-pointer">{recordedAudio && (
            <>
            {!isPlaying? (
             <FaPlay onClick={handlePlayRecoridng} />
@@ -214,7 +219,7 @@ function CaptureAudio({hide}) {
       )}
       <audio ref={audioRef} hidden />
     </div>
-    <div className="mr-4">
+    <div className="mr-4 cursor-pointer">
       {!isRecording ? (
         <FaMicrophone 
           className="text-red-500"

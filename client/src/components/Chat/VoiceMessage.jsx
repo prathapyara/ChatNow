@@ -20,6 +20,7 @@ function VoiceMessage({message}) {
 
   useEffect(()=>{
     if(waveform.current===null){
+      
      waveform.current=WaveSurfer.create({
         container:waveFromRef.current,
         waveColor:"#ccc",
@@ -29,14 +30,16 @@ function VoiceMessage({message}) {
         height:30,
         responsive:true,
       });
+     
     waveform.current.on("finish",()=>{
       setIsPlaying(false);
+      
     });
    }
   },[]);
 
   useEffect(()=>{
-    const audioURL="http://localhost:3000/upload/recordings/call-sound.mp3";
+    const audioURL=`http://127.0.0.1:3002/${message.message}`;
     console.log(audioURL);
     const audio=new Audio(audioURL);
     setAudioMessage(audio);

@@ -33,7 +33,8 @@ function Main() {
   onAuthStateChanged(firebaseAuth,async(currentUser)=>{
     if(!currentUser)setRedirectLogin(true);
     if(!userInfo && currentUser?.email){
-      const {data}=await axios.post(CHECK_USER_ROUTE,{
+      console.log("i am here2")
+      const {data}=await axios.post("http://localhost:3002/api/auth/check-user",{
         email:currentUser.email,
       });
 
@@ -68,16 +69,18 @@ function Main() {
     }
   },[userInfo]);
 
-  useEffect(()=>{
-    
-    if(socket.current && !socketEvent){
+  
 
+  useEffect(()=>{
+
+    if(socket.current && !socketEvent){
       socket.current.on("msg-recieved",(data)=>{
-        dispatch({
-          type:reducerCases.ADD_MESSAGE,newMessage:{...data.message,},
-        });
+          dispatch({
+            type:reducerCases.ADD_MESSAGE,newMessage:{...data.message,},
+          });
+        
       });
-    
+
       socket.current.on("incoming-voice-call",(from,roomId,callType)=>{
         dispatch({
           type:reducerCases.SET_INCOMING_VOICE_CALL,
